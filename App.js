@@ -1,14 +1,7 @@
-import { StyleSheet, View } from 'react-native';
+import "react-native-gesture-handler";
+
+import AppRoot from "./src/AppRoot";
 
 export default function App() {
-  return (
-    <View style={styles.container} />
-  );
+  return <AppRoot />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-});
