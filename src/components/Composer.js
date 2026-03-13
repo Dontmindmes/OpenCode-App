@@ -1,22 +1,61 @@
-import { StyleSheet, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Feather } from "@expo/vector-icons";
 
 import { colors, radii, spacing, type } from "../constants/theme";
-import { PrimaryButton } from "./PrimaryButton";
 
-export function Composer({ value, onChangeText, onSend, sending, onAbort, canAbort }) {
+export function Composer({
+  value,
+  onChangeText,
+  onSend,
+  sending,
+  onAbort,
+  canAbort,
+  modelLabel,
+  reasoningLabel,
+  modeLabel,
+  onOpenCommands,
+  onOpenModel,
+  onOpenReasoning,
+  onOpenMode,
+  onOpenWorkspace,
+  workspaceLabel,
+  statusLabel,
+  branchLabel,
+}) {
   return (
     <View style={styles.wrap}>
-      <TextInput
-        multiline
-        placeholder="Send a prompt or /command"
-        placeholderTextColor={colors.textDim}
-        style={styles.input}
-        value={value}
-        onChangeText={onChangeText}
-      />
-      <View style={styles.actions}>
-        {canAbort ? <PrimaryButton label="Abort" tone="ghost" onPress={onAbort} style={styles.abort} /> : null}
-        <PrimaryButton label={sending ? "Sending..." : "Send"} onPress={onSend} disabled={sending || !value.trim()} />
+      {canAbort ? (
+        <View style={styles.steerRow}>
+          <Text style={styles.steerLabel}>Running...</Text>
+          <Pressable onPress={onAbort} style={styles.steerButton}>
+            <Text style={styles.steerButtonLabel}>Stop</Text>
+          </Pressable>
+        </View>
+      ) : null}
+      <View style={styles.mainRow}>
+        <Pressable onPress={onOpenModel} style={styles.pill}>
+          <Text style={styles.pillText}>{modelLabel || "Model"}</Text>
+        </Pressable>
+        <Pressable onPress={onOpenReasoning} style={styles.pill}>
+          <Text style={styles.pillText}>{reasoningLabel || "Reasoning"}</Text>
+        </Pressable>
+        <Pressable onPress={onOpenMode} style={styles.pill}>
+          <Text style={styles.pillTextAccent}>{modeLabel || "Mode"}</Text>
+        </Pressable>
+      </View>
+      <View style={styles.inputRow}>
+        <TextInput
+          placeholder="Ask something..."
+          placeholderTextColor={colors.textDim}
+          style={styles.input}
+          value={value}
+          onChangeText={onChangeText}
+          returnKeyType="send"
+          onSubmitEditing={onSend}
+        />
+        <Pressable onPress={onSend} disabled={sending || !value.trim()} style={[styles.sendButton, sending || !value.trim() ? styles.sendButtonDisabled : null]}>
+          <Feather name="arrow-up" size={18} color="#ffffff" />
+        </Pressable>
       </View>
     </View>
   );
@@ -24,33 +63,85 @@ export function Composer({ value, onChangeText, onSend, sending, onAbort, canAbo
 
 const styles = StyleSheet.create({
   wrap: {
-    gap: spacing.sm,
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
     borderTopWidth: 1,
     borderTopColor: colors.border,
-    paddingTop: spacing.md,
+    paddingHorizontal: spacing.sm,
+    paddingTop: spacing.sm,
     paddingBottom: spacing.md,
   },
-  input: {
-    minHeight: 116,
-    maxHeight: 220,
-    borderRadius: radii.lg,
+  steerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: spacing.xs,
+  },
+  steerLabel: {
+    color: colors.textMuted,
+    fontFamily: type.mono,
+    fontSize: 11,
+  },
+  steerButton: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.pill,
+    backgroundColor: colors.surfaceSoft,
     borderWidth: 1,
-    borderColor: colors.borderStrong,
-    backgroundColor: "rgba(255, 244, 222, 0.06)",
+    borderColor: colors.border,
+  },
+  steerButtonLabel: {
+    color: colors.text,
+    fontFamily: type.mono,
+    fontSize: 11,
+  },
+  mainRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+    marginBottom: spacing.sm,
+  },
+  pill: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.pill,
+    backgroundColor: colors.surfaceSoft,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  pillText: {
+    color: colors.textDim,
+    fontFamily: type.mono,
+    fontSize: 10,
+  },
+  pillTextAccent: {
+    color: colors.accentCool,
+    fontFamily: type.mono,
+    fontSize: 10,
+  },
+  inputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+  },
+  input: {
+    flex: 1,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: colors.surfaceSoft,
     color: colors.text,
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
-    textAlignVertical: "top",
-    fontFamily: type.body,
-    fontSize: 15,
-    lineHeight: 22,
+    fontFamily: type.mono,
+    fontSize: 14,
   },
-  actions: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    gap: spacing.sm,
+  sendButton: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.ink,
   },
-  abort: {
-    minWidth: 88,
+  sendButtonDisabled: {
+    opacity: 0.2,
   },
 });

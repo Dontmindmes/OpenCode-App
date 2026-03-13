@@ -4,10 +4,10 @@ import { colors, radii, spacing, type } from "../constants/theme";
 
 export function Pill({ children, active, onPress, tone = "default", style }) {
   const palette = active
-    ? { bg: colors.accent, text: "#20160b", border: colors.accent }
+    ? { bg: colors.surface, text: colors.text, border: colors.borderStrong }
     : tone === "cool"
-      ? { bg: "rgba(116, 192, 184, 0.13)", text: colors.accentCool, border: "rgba(116, 192, 184, 0.3)" }
-      : { bg: colors.surfaceSoft, text: colors.textMuted, border: colors.borderStrong };
+      ? { bg: "rgba(30, 183, 207, 0.08)", text: colors.accentCool, border: "rgba(30, 183, 207, 0.16)" }
+      : { bg: colors.surfaceSoft, text: colors.textMuted, border: colors.border };
 
   return (
     <Pressable
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs,
   },
   label: {
-    fontFamily: type.body,
+    fontFamily: type.mono,
     fontSize: 12,
   },
 });

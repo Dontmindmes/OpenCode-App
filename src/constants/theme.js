@@ -1,25 +1,27 @@
+import { Platform } from "react-native";
+
 export const colors = {
-  ink: "#f8f4ec",
-  text: "#f6f0e7",
-  textMuted: "#bfb5a5",
-  textDim: "#8f8476",
-  border: "rgba(255, 244, 222, 0.12)",
-  borderStrong: "rgba(255, 244, 222, 0.22)",
-  surface: "#191714",
-  surfaceRaised: "#211d19",
-  surfaceAlt: "#2a241f",
-  surfaceSoft: "rgba(255, 244, 222, 0.06)",
-  surfaceOverlay: "rgba(15, 13, 10, 0.78)",
-  accent: "#f2a65a",
-  accentStrong: "#ffbf78",
-  accentCool: "#74c0b8",
-  success: "#71d08f",
-  danger: "#ff7f73",
-  warning: "#f0c36b",
-  backgroundTop: "#120f0c",
-  backgroundBottom: "#30261e",
-  cardTop: "rgba(255, 244, 222, 0.08)",
-  cardBottom: "rgba(255, 244, 222, 0.03)",
+  ink: "#111111",
+  text: "#141414",
+  textMuted: "#646464",
+  textDim: "#9d9d9d",
+  border: "rgba(18, 18, 18, 0.06)",
+  borderStrong: "rgba(18, 18, 18, 0.1)",
+  surface: "#ffffff",
+  surfaceRaised: "#fbfbfa",
+  surfaceAlt: "#f3f3f1",
+  surfaceSoft: "#f7f7f5",
+  surfaceOverlay: "rgba(255, 255, 255, 0.88)",
+  accent: "#111111",
+  accentStrong: "#1eb7cf",
+  accentCool: "#1eb7cf",
+  success: "#59b874",
+  danger: "#db6b6b",
+  warning: "#d49a42",
+  backgroundTop: "#f6f6f3",
+  backgroundBottom: "#efefeb",
+  cardTop: "rgba(255, 255, 255, 0.92)",
+  cardBottom: "rgba(249, 249, 247, 0.96)",
 };
 
 export const spacing = {
@@ -40,13 +42,7 @@ export const radii = {
 };
 
 export const shadows = {
-  panel: {
-    shadowColor: "#000000",
-    shadowOpacity: 0.24,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: 12 },
-    elevation: 10,
-  },
+  panel: {},
 };
 
 export const type = {

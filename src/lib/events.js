@@ -2,7 +2,7 @@ export function normalizeEventPayload(payload) {
   const type = payload?.type || payload?.event || "unknown";
   const properties = payload?.properties || payload || {};
   const sessionId =
-    properties.sessionID || properties.sessionId || properties.info?.sessionID || properties.info?.sessionId || properties.part?.sessionID || properties.permission?.sessionID || null;
+    properties.sessionID || properties.sessionId || properties.info?.sessionID || properties.info?.sessionId || properties.part?.sessionID || properties.permission?.sessionID || properties.question?.sessionID || properties.action?.sessionID || null;
 
   return {
     type,
@@ -31,12 +31,12 @@ export function extractInteractionFromEvent(normalized) {
     };
   }
 
-  if (type.includes("question") || hasQuestionShape(properties)) {
+  if (type.includes("question") || type.includes("choice") || hasQuestionShape(properties)) {
     const choices = properties.options || properties.choices || properties.buttons || [];
     return {
       kind: "question",
       sessionId,
-      id: properties.id || properties.questionID || properties.questionId,
+      id: properties.id || properties.questionID || properties.questionId || properties.choiceID || properties.choiceId,
       title: properties.title || properties.label || "Question",
       body: properties.message || properties.prompt || properties.description || "OpenCode is waiting for a choice.",
       createdAt: properties.time?.created,
@@ -45,12 +45,12 @@ export function extractInteractionFromEvent(normalized) {
     };
   }
 
-  if (type.includes("action") || hasActionShape(properties)) {
-    const actions = properties.actions || properties.buttons || [];
+  if (type.includes("action") || type.includes("tool") || hasActionShape(properties)) {
+    const actions = properties.actions || properties.buttons || properties.tools || [];
     return {
       kind: "action",
       sessionId,
-      id: properties.id || properties.actionID || properties.actionId,
+      id: properties.id || properties.actionID || properties.actionId || properties.toolID || properties.toolId,
       title: properties.title || "Action required",
       body: properties.message || properties.description || "Choose the next action.",
       createdAt: properties.time?.created,

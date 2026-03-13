@@ -70,6 +70,10 @@ export function SettingsScreen({ navigation }) {
         <Panel>
           <View style={styles.group}>
             <Text style={styles.sectionTitle}>Providers</Text>
+            <View style={styles.providerActions}>
+              <PrimaryButton label="Manage provider auth" tone="subtle" onPress={() => navigation.navigate("ProviderAuth")} />
+              <PrimaryButton label="Open workspace tools" tone="subtle" onPress={() => navigation.navigate("WorkspaceTools")} />
+            </View>
             {providers.length ? (
               providers.map((provider) => (
                 <View key={provider.id} style={styles.providerRow}>
@@ -123,4 +127,5 @@ const styles = StyleSheet.create({
   providerRow: { gap: spacing.sm, paddingVertical: spacing.xs, borderBottomWidth: 1, borderBottomColor: colors.border },
   providerCopy: { gap: 2 },
   providerMeta: { flexDirection: "row", flexWrap: "wrap", gap: spacing.xs },
+  providerActions: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
 });

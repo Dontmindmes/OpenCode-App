@@ -93,6 +93,24 @@ export const opencodeApi = {
   getVcs(host, projectPath) {
     return request(host, "/vcs", {}, projectPath);
   },
+  searchFiles(host, query, projectPath, type, limit = 50) {
+    const params = new URLSearchParams();
+    params.set("query", query);
+    params.set("limit", String(limit));
+    if (type) {
+      params.set("type", type);
+    }
+    return request(host, `/find/file?${params.toString()}`, {}, projectPath);
+  },
+  searchText(host, query, projectPath) {
+    return request(host, `/find?pattern=${encodeURIComponent(query)}`, {}, projectPath);
+  },
+  readFile(host, filePath, projectPath) {
+    return request(host, `/file/content?path=${encodeURIComponent(filePath)}`, {}, projectPath);
+  },
+  getFileStatus(host, projectPath) {
+    return request(host, "/file/status", {}, projectPath);
+  },
   listSessions(host, projectPath) {
     return request(host, "/session", {}, projectPath);
   },
@@ -167,6 +185,9 @@ export const opencodeApi = {
   getProviderAuth(host, projectPath) {
     return request(host, "/provider/auth", {}, projectPath);
   },
+  setAuth(host, providerId, body, projectPath) {
+    return request(host, `/auth/${providerId}`, { method: "PUT", body: JSON.stringify(body) }, projectPath);
+  },
   getConfigProviders(host, projectPath) {
     return request(host, "/config/providers", {}, projectPath);
   },
@@ -181,6 +202,14 @@ export const opencodeApi = {
       host,
       `/session/${sessionId}/permissions/${permissionId}`,
       { method: "POST", body: JSON.stringify({ response, remember }) },
+      projectPath,
+    );
+  },
+  answerQuestion(host, sessionId, questionId, answer, projectPath) {
+    return request(
+      host,
+      `/session/${sessionId}/question/${questionId}`,
+      { method: "POST", body: JSON.stringify({ answer }) },
       projectPath,
     );
   },

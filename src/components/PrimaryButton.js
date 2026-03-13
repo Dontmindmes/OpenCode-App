@@ -4,10 +4,10 @@ import { colors, radii, spacing, type } from "../constants/theme";
 
 export function PrimaryButton({ label, onPress, disabled, tone = "accent", style }) {
   const tones = {
-    accent: { backgroundColor: colors.accent, labelColor: "#26190a" },
-    subtle: { backgroundColor: colors.surfaceAlt, labelColor: colors.text },
+    accent: { backgroundColor: colors.accent, labelColor: "#ffffff" },
+    subtle: { backgroundColor: colors.surface, labelColor: colors.text },
     ghost: { backgroundColor: "transparent", labelColor: colors.textMuted },
-    danger: { backgroundColor: colors.danger, labelColor: "#250d09" },
+    danger: { backgroundColor: colors.danger, labelColor: "#ffffff" },
   };
   const palette = tones[tone];
 
@@ -30,15 +30,17 @@ export function PrimaryButton({ label, onPress, disabled, tone = "accent", style
 
 const styles = StyleSheet.create({
   button: {
-    minHeight: 48,
+    minHeight: 44,
     borderRadius: radii.pill,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   label: {
-    fontFamily: type.heading,
-    fontSize: 15,
+    fontFamily: type.mono,
+    fontSize: 14,
   },
   disabled: {
     opacity: 0.45,

@@ -14,7 +14,7 @@ export function Screen({ children, scroll = true, contentStyle }) {
   );
 
   return (
-    <LinearGradient colors={[colors.backgroundTop, colors.backgroundBottom]} style={styles.fill}>
+    <LinearGradient colors={[colors.surface, colors.surface]} style={styles.fill}>
       <SafeAreaView style={styles.fill} edges={["top", "left", "right"]}>
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.fill}>
           {content}
@@ -30,8 +30,8 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
+    paddingTop: spacing.md,
     paddingBottom: spacing.xxl,
-    gap: spacing.lg,
+    gap: spacing.md,
   },
 });

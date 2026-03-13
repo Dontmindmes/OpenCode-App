@@ -8,8 +8,6 @@ import { AppProviders } from "./providers/AppProviders";
 import { colors, type } from "./constants/theme";
 import { useAppStore } from "./store/appStore";
 import { ConnectScreen } from "./screens/ConnectScreen";
-import { SessionScreen } from "./screens/SessionScreen";
-import { SettingsScreen } from "./screens/SettingsScreen";
 import { WorkspaceScreen } from "./screens/WorkspaceScreen";
 
 const Stack = createNativeStackNavigator();
@@ -33,7 +31,7 @@ function Bootstrap() {
     return (
       <View style={styles.loadingScreen}>
         <ActivityIndicator color={colors.accent} size="large" />
-        <Text style={styles.loadingText}>Booting OpenCode App...</Text>
+        <Text style={styles.loadingText}>Loading OpenCode...</Text>
       </View>
     );
   }
@@ -48,8 +46,7 @@ function Bootstrap() {
     >
       <Stack.Screen name="Connect" component={ConnectScreen} />
       <Stack.Screen name="Workspace" component={WorkspaceScreen} />
-      <Stack.Screen name="Session" component={SessionScreen} />
-      <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="Session" getComponent={() => require("./screens/SessionScreen").SessionScreen} />
     </Stack.Navigator>
   );
 }

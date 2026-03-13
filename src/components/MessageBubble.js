@@ -1,21 +1,51 @@
 import { StyleSheet, Text, View } from "react-native";
 
 import { colors, radii, spacing, type } from "../constants/theme";
-import { compactJson } from "../lib/format";
 
 export function MessageBubble({ message }) {
   const role = message?.info?.role || message?.info?.type || "assistant";
   const isUser = role === "user";
-  const parts = Array.isArray(message?.parts) ? message.parts : [];
+  
+  let parts = [];
+  if (Array.isArray(message?.parts)) {
+    parts = message.parts;
+  } else if (Array.isArray(message?.content)) {
+    parts = message.content;
+  } else if (Array.isArray(message?.messages)) {
+    parts = message.messages;
+  } else if (message?.text) {
+    parts = [{ type: "text", text: message.text }];
+  } else if (message?.message?.text) {
+    parts = [{ type: "text", text: message.message.text }];
+  }
+  
+  const timestamp = formatMessageTime(message?.time?.created || message?.time?.updated || message?.info?.time);
 
   return (
     <View style={[styles.row, isUser ? styles.userRow : styles.assistantRow]}>
       <View style={[styles.bubble, isUser ? styles.userBubble : styles.assistantBubble]}>
-        <Text style={[styles.role, isUser ? styles.userRole : styles.assistantRole]}>{role.toUpperCase()}</Text>
         {parts.length ? parts.map((part, index) => <PartBlock key={part.id || `${role}-${index}`} part={part} isUser={isUser} />) : <Text style={[styles.body, isUser ? styles.userBody : null]}>No visible content yet.</Text>}
+        {timestamp ? <Text style={[styles.time, isUser ? styles.userTime : styles.assistantTime]}>{timestamp}</Text> : null}
       </View>
     </View>
   );
+}
+
+function formatMessageTime(value) {
+  if (!value) {
+    return null;
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  return date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function PartBlock({ part, isUser }) {
@@ -28,12 +58,7 @@ function PartBlock({ part, isUser }) {
   }
 
   if (part.type === "reasoning") {
-    return (
-      <View style={styles.reasoningBlock}>
-        <Text style={styles.partLabel}>REASONING</Text>
-        <Text style={styles.reasoningText}>{part.text}</Text>
-      </View>
-    );
+    return null;
   }
 
   if (part.type === "tool") {
@@ -41,10 +66,9 @@ function PartBlock({ part, isUser }) {
     return (
       <View style={styles.partBlock}>
         <View style={styles.partHeader}>
-          <Text style={styles.partLabel}>{part.tool}</Text>
-          <Text style={styles.partMeta}>{status.toUpperCase()}</Text>
+          <Text style={styles.partLabel}>{part.tool || "Tool"}</Text>
+          <Text style={styles.partMeta}>{status}</Text>
         </View>
-        <Text style={styles.code}>{compactJson(part.state?.input || part.state?.output || part.state || {})}</Text>
       </View>
     );
   }
@@ -52,7 +76,7 @@ function PartBlock({ part, isUser }) {
   if (part.type === "file") {
     return (
       <View style={styles.partBlock}>
-        <Text style={styles.partLabel}>FILE</Text>
+        <Text style={styles.partLabel}>File</Text>
         <Text style={styles.code}>{part.filename || part.source?.path || part.url}</Text>
       </View>
     );
@@ -61,7 +85,7 @@ function PartBlock({ part, isUser }) {
   if (part.type === "patch") {
     return (
       <View style={styles.partBlock}>
-        <Text style={styles.partLabel}>PATCH</Text>
+        <Text style={styles.partLabel}>Edited files</Text>
         <Text style={styles.code}>{(part.files || []).join("\n")}</Text>
       </View>
     );
@@ -70,7 +94,7 @@ function PartBlock({ part, isUser }) {
   if (part.type === "agent") {
     return (
       <View style={styles.partBlock}>
-        <Text style={styles.partLabel}>AGENT</Text>
+        <Text style={styles.partLabel}>Agent</Text>
         <Text style={styles.body}>{part.name}</Text>
       </View>
     );
@@ -79,47 +103,41 @@ function PartBlock({ part, isUser }) {
   if (part.type === "subtask") {
     return (
       <View style={styles.partBlock}>
-        <Text style={styles.partLabel}>SUBTASK</Text>
+        <Text style={styles.partLabel}>Subtask</Text>
         <Text style={styles.body}>{part.description}</Text>
-        <Text style={styles.code}>{part.prompt}</Text>
       </View>
     );
   }
 
   if (part.type === "step-start" || part.type === "step-finish") {
-    return (
-      <View style={styles.partBlock}>
-        <Text style={styles.partLabel}>{part.type.toUpperCase()}</Text>
-        <Text style={styles.body}>{compactJson(part)}</Text>
-      </View>
-    );
+    return null;
   }
 
-  return (
-    <View style={styles.partBlock}>
-      <Text style={styles.partLabel}>{String(part.type || "PART").toUpperCase()}</Text>
-      <Text style={styles.code}>{compactJson(part)}</Text>
-    </View>
-  );
+  return null;
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: "row" },
+  row: { flexDirection: "row", width: "100%", paddingHorizontal: spacing.xs },
   userRow: { justifyContent: "flex-end" },
   assistantRow: { justifyContent: "flex-start" },
-  bubble: { maxWidth: "94%", borderRadius: radii.lg, padding: spacing.md, gap: spacing.sm },
-  userBubble: { backgroundColor: colors.accent },
-  assistantBubble: { backgroundColor: "rgba(255, 244, 222, 0.07)", borderWidth: 1, borderColor: colors.border },
-  role: { fontFamily: type.mono, fontSize: 11, letterSpacing: 1.2 },
-  userRole: { color: "#3f2a11" },
-  assistantRole: { color: colors.accentStrong },
-  body: { color: colors.text, fontFamily: type.body, fontSize: 15, lineHeight: 22 },
-  userBody: { color: "#281a0a" },
-  partBlock: { gap: spacing.xs, paddingTop: spacing.xs, borderTopWidth: 1, borderTopColor: "rgba(255, 244, 222, 0.08)" },
+  bubble: { maxWidth: "85%", paddingHorizontal: 18, paddingVertical: 14, gap: spacing.xs },
+  userBubble: {
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
+    borderRadius: 22,
+    minWidth: 100,
+  },
+  assistantBubble: {
+    backgroundColor: "rgba(0, 0, 0, 0.04)",
+    borderRadius: 22,
+  },
+  body: { color: colors.text, fontFamily: type.mono, fontSize: 14, lineHeight: 21 },
+  userBody: { color: "#ffffff" },
+  partBlock: { gap: spacing.xs, paddingTop: spacing.sm },
   partHeader: { flexDirection: "row", justifyContent: "space-between", gap: spacing.sm },
-  partLabel: { color: colors.accentStrong, fontFamily: type.mono, fontSize: 11, letterSpacing: 1.1 },
-  partMeta: { color: colors.textDim, fontFamily: type.mono, fontSize: 11 },
-  code: { color: colors.text, fontFamily: type.mono, fontSize: 12, lineHeight: 18 },
-  reasoningBlock: { gap: spacing.xs, padding: spacing.sm, borderRadius: radii.md, backgroundColor: "rgba(116, 192, 184, 0.08)" },
-  reasoningText: { color: colors.textMuted, fontFamily: type.body, lineHeight: 20 },
+  partLabel: { color: colors.textMuted, fontFamily: type.mono, fontSize: 10, letterSpacing: 0.8, textTransform: "uppercase" },
+  partMeta: { color: colors.textDim, fontFamily: type.mono, fontSize: 10 },
+  code: { color: colors.textMuted, fontFamily: type.mono, fontSize: 11, lineHeight: 16 },
+  time: { fontFamily: type.mono, fontSize: 10, marginTop: spacing.xs },
+  userTime: { color: "rgba(255, 255, 255, 0.6)", alignSelf: "flex-end" },
+  assistantTime: { color: colors.textDim },
 });

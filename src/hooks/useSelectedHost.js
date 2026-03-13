@@ -22,14 +22,24 @@ export function useSelectedHost() {
       }
 
       setLoading(true);
-      const value = await readHostSecret(selectedHostId);
 
-      if (!active) {
-        return;
+      try {
+        const value = await readHostSecret(selectedHostId);
+
+        if (!active) {
+          return;
+        }
+
+        setSecret(value);
+        setLoading(false);
+      } catch {
+        if (!active) {
+          return;
+        }
+
+        setSecret(null);
+        setLoading(false);
       }
-
-      setSecret(value);
-      setLoading(false);
     }
 
     load();
@@ -39,7 +49,17 @@ export function useSelectedHost() {
     };
   }, [selectedHostId]);
 
-  const host = useMemo(() => (meta && secret ? { ...meta, ...secret } : null), [meta, secret]);
+  const host = useMemo(() => {
+    if (!meta) {
+      return null;
+    }
+
+    return {
+      ...meta,
+      username: secret?.username || meta.username || "opencode",
+      password: secret?.password || "",
+    };
+  }, [meta, secret]);
 
   return {
     loading,

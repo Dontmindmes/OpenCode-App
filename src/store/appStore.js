@@ -12,6 +12,12 @@ const initialState = {
   pendingInteractionsBySession: {},
 };
 
+const defaultRunProfile = {
+  agent: "build",
+  modelKey: null,
+  reasoning: "default",
+};
+
 function projectScope(hostId, projectPath) {
   return `${hostId || "unknown"}::${projectPath || "default"}`;
 }
@@ -93,9 +99,7 @@ export const useAppStore = create((set, get) => ({
       runProfileByScope: {
         ...state.runProfileByScope,
         [projectScope(hostId, projectPath)]: {
-          agent: "build",
-          modelKey: null,
-          reasoning: "default",
+          ...defaultRunProfile,
           ...(state.runProfileByScope[projectScope(hostId, projectPath)] || {}),
           ...patch,
         },
@@ -149,11 +153,5 @@ export function getProjectScope(hostId, projectPath) {
 }
 
 export function getRunProfile(state, hostId, projectPath) {
-  return (
-    state.runProfileByScope[projectScope(hostId, projectPath)] || {
-      agent: "build",
-      modelKey: null,
-      reasoning: "default",
-    }
-  );
+  return state.runProfileByScope[projectScope(hostId, projectPath)] || defaultRunProfile;
 }
